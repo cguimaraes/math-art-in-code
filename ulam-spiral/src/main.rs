@@ -31,7 +31,7 @@ fn is_prime(n: usize) -> bool {
 }
 
 fn create_matrix(size: usize) -> Vec<usize> {
-    assert!(size % 2 != 0, "Matrix size should odd!");
+    assert!(size > 0 && size % 2 != 0, "Matrix size must be odd and bigger than 0!");
 
     let mut matrix = vec![0; size * size];
     let mut dir: u8 = 0; /* 0: Right, 1: Up, 2: Left, 3: Down */
