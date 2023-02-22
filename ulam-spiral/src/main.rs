@@ -30,16 +30,17 @@ fn is_prime(n: usize) -> bool {
     return true;
 }
 
-fn create_matrix(size: usize) -> Vec<Vec<usize>> {
+fn create_matrix(size: usize) -> Vec<usize> {
     assert!(size % 2 != 0, "Matrix size should odd!");
 
-    let mut matrix = vec![vec![0; size]; size];
+    let mut matrix = vec![0; size * size];
     let mut dir: u8 = 0; /* 0: Right, 1: Up, 2: Left, 3: Down */
     let mut step: usize = 1;
     let mut x: usize = size / 2;
     let mut y: usize = size / 2;
 
-    matrix[x][y] = 1;
+    matrix[(y * size) + x] = 1;
+
     let mut i = 2;
     while i < (size * size) {
         for _j in 0..2 { // Step is incremented every two directions
@@ -55,7 +56,7 @@ fn create_matrix(size: usize) -> Vec<Vec<usize>> {
                     3 => y = y + 1,
                     _ => panic!("I must not be here!"),
                 }
-                matrix[x][y] = i;
+                matrix[(y * size) + x] = i;
                 i = i + 1;                
             }
             dir = (dir + 1) % 4;
@@ -66,31 +67,28 @@ fn create_matrix(size: usize) -> Vec<Vec<usize>> {
     return matrix;
 }
 
-fn print_matrix(m: &Vec<Vec<usize>>, as_numbers: bool) {
-    for y in 0..m.len() {
-        for x in 0..m.len() {
-            if as_numbers {
-                print!("{}", m[x][y]);
-            } else {
-                print!("{}", if is_prime(m[x][y]) { 1 } else { 0 });
-            }
-        }
-        println!("");
+fn print_matrix(m: &Vec<usize>, as_numbers: bool) {
+    let size: u32 = (m.len() as f32).sqrt() as u32;
+
+    let mut pos: u32 = 1;
+    for item in m {
+        print!("{}{}",
+               if as_numbers {*item} else {if is_prime(*item) { 1 } else { 0 }},
+               if pos % size == 0 {"\n"} else {""});
+        pos = pos + 1;
     }
 }
 
-fn save_as_image(m: Vec<Vec<usize>>, path: &str) {
-    let width: u32 = m.len().try_into().unwrap();
-    let height: u32 = m.len().try_into().unwrap();
-    let mut img: image::GrayImage = ImageBuffer::new(width, height);
-    for x in 0..width {
-        for y in 0..height {
-            if is_prime(m[x as usize][y as usize]) {
-                img.put_pixel(x, y, Luma([0]));
-            } else {
-                img.put_pixel(x, y, Luma([255]));
-            }
-        }
+fn save_as_image(m: Vec<usize>, path: &str) {
+    let size: u32 = (m.len() as f32).sqrt() as u32;
+    let mut img: image::GrayImage = ImageBuffer::new(size, size);
+
+    let mut pos: u32 = 0;
+    for item in m {
+        img.put_pixel(pos % size,
+                      pos / size,
+                      if is_prime(item) { Luma([0]) } else { Luma([255]) });
+        pos = pos + 1;
     }
 
     img.save(path).unwrap();
