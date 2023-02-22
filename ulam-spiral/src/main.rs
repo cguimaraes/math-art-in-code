@@ -88,9 +88,9 @@ fn save_as_image(m: Vec<Vec<usize>>, path: &str) {
     for x in 0..width {
         for y in 0..height {
             if is_prime(m[x as usize][y as usize]) {
-                img.put_pixel(y, x, Luma([100]));
+                img.put_pixel(x, y, Luma([100]));
             } else {
-                img.put_pixel(y, x, Luma([0]));
+                img.put_pixel(x, y, Luma([0]));
             }
         }
     }
