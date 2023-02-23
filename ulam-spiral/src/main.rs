@@ -18,32 +18,32 @@ use std::ops::{Index, IndexMut};
 use image::{ImageBuffer, Luma};
 
 struct SquareMatrix {
-    elems: Vec<usize>
+    elems: Vec<u32>
 }
 
 impl SquareMatrix {
-    pub fn len(&self) -> usize {
-        return self.elems.len();
+    pub fn len(&self) -> u32 {
+        return self.elems.len() as u32;
     }
 
-    pub fn width(&self) -> usize {
-        return (self.len() as f32).sqrt() as usize;
-    }
-}
-
-impl Index<(usize, usize)> for SquareMatrix {
-    type Output = usize;
-
-    fn index(&self, idx: (usize, usize)) -> &usize {
-        let width: usize = self.width();
-        return &self.elems[(idx.1 * width) + idx.0];
+    pub fn width(&self) -> u32 {
+        return (self.len() as f32).sqrt() as u32;
     }
 }
 
-impl IndexMut<(usize, usize)> for SquareMatrix {
-    fn index_mut(&mut self, idx: (usize, usize)) -> &mut usize {
-        let width: usize = self.width();
-        return &mut self.elems[(idx.1 * width) + idx.0];
+impl Index<(u32, u32)> for SquareMatrix {
+    type Output = u32;
+
+    fn index(&self, idx: (u32, u32)) -> &u32 {
+        let width: u32 = self.width();
+        return &self.elems[((idx.1 * width) + idx.0) as usize];
+    }
+}
+
+impl IndexMut<(u32, u32)> for SquareMatrix {
+    fn index_mut(&mut self, idx: (u32, u32)) -> &mut u32 {
+        let width: u32 = self.width();
+        return &mut self.elems[((idx.1 * width) + idx.0) as usize];
     }
 }
 
@@ -52,17 +52,16 @@ struct UlamSpiral {
 }
 
 impl UlamSpiral {
-    pub fn new(size: usize) -> Self {
+    pub fn new(size: u32) -> Self {
         assert!(size > 0 && size % 2 != 0, "Matrix size must be odd and bigger than 0!");
 
         let mut matrix = SquareMatrix {
-            elems: vec![0; size * size],
+            elems: vec![0; (size * size) as usize],
         };
-        
 
         let mut dir: Directions = Directions::RIGHT;
-        let mut step: usize = 1;
-        let mut xy_cursor: (usize, usize) = (size / 2, size / 2);
+        let mut step: u32 = 1;
+        let mut xy_cursor: (u32, u32) = (size / 2, size / 2);
         matrix[(xy_cursor.0, xy_cursor.1)] = 1;
 
         let mut i = 2;
@@ -93,7 +92,7 @@ impl UlamSpiral {
         }
     }
 
-    pub fn elems(&self) -> &Vec<usize> {
+    pub fn elems(&self) -> &Vec<u32> {
         return &self.matrix.elems;
     }
 }
@@ -117,7 +116,7 @@ impl Directions
     }
 }
 
-fn is_prime(n: usize) -> bool {
+fn is_prime(n: u32) -> bool {
     if n == 0 || n == 1 {
         return false;
     }
@@ -132,9 +131,9 @@ fn is_prime(n: usize) -> bool {
 }
 
 fn print_matrix(us: &UlamSpiral, as_numbers: bool) {
-    let width: usize = us.matrix.width();
+    let width: u32 = us.matrix.width();
 
-    let mut i : usize = 1;
+    let mut i : u32 = 1;
     for &elem in us.elems() {
         print!("{}{}",
                if as_numbers {elem} else {if is_prime(elem) { 1 } else { 0 }},
@@ -144,20 +143,20 @@ fn print_matrix(us: &UlamSpiral, as_numbers: bool) {
 }
 
 fn save_as_image(us: &UlamSpiral, path: &str) {
-    let width: u32 = (us.matrix.width()) as u32;
+    let width: u32 = us.matrix.width();
     let mut img: image::GrayImage = ImageBuffer::new(width, width);
 
-    for pos in 0..us.matrix.len() as u32 {
+    for pos in 0..us.matrix.len() {
         let x : u32 = pos % width;
         let y : u32 = pos / width;
-        img.put_pixel(x, y, if is_prime(us.matrix[(x as usize, y as usize)]) { Luma([0]) } else { Luma([255]) });
+        img.put_pixel(x, y, if is_prime(us.matrix[(x, y)]) { Luma([0]) } else { Luma([255]) });
     }
 
     img.save(path).unwrap();
 }
 
 fn main() {
-    let size: usize = 3;
+    let size: u32 = 3;
     let verbose: bool = true;
     let output: &str = "./test.png";
     
