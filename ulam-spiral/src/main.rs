@@ -16,6 +16,25 @@
 
 use image::{ImageBuffer, Luma};
 
+enum Directions {
+    RIGHT = 0,
+    UP = 1,
+    LEFT = 2,
+    DOWN = 3
+}
+
+impl Directions
+{
+    fn rotate_counter_clockwise(&self) -> Directions {
+        match self {
+            Directions::RIGHT => return Directions::UP,
+            Directions::UP => return Directions::LEFT,
+            Directions::LEFT => return Directions::DOWN,
+            Directions::DOWN => return Directions::RIGHT
+        };
+    }
+}
+
 fn is_prime(n: usize) -> bool {
     if n == 0 || n == 1 {
         return false;
@@ -34,7 +53,7 @@ fn create_matrix(size: usize) -> Vec<usize> {
     assert!(size > 0 && size % 2 != 0, "Matrix size must be odd and bigger than 0!");
 
     let mut matrix = vec![0; size * size];
-    let mut dir: u8 = 0; /* 0: Right, 1: Up, 2: Left, 3: Down */
+    let mut dir: Directions = Directions::RIGHT;
     let mut step: usize = 1;
     let mut x: usize = size / 2;
     let mut y: usize = size / 2;
@@ -50,16 +69,16 @@ fn create_matrix(size: usize) -> Vec<usize> {
                 }
 
                 match dir {
-                    0 => x = x + 1,
-                    1 => y = y - 1,
-                    2 => x = x - 1,
-                    3 => y = y + 1,
-                    _ => panic!("I must not be here!"),
+                    Directions::RIGHT => x = x + 1,
+                    Directions::UP => y = y - 1,
+                    Directions::LEFT => x = x - 1,
+                    Directions::DOWN => y = y + 1
                 }
+
                 matrix[(y * size) + x] = i;
                 i = i + 1;                
             }
-            dir = (dir + 1) % 4;
+            dir = dir.rotate_counter_clockwise();
         }
         step = step + 1;        
     }
