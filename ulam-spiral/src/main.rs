@@ -14,7 +14,71 @@
 // limitations under the License.
 //
 
+use std::ops::{Index, IndexMut};
 use image::{ImageBuffer, Luma};
+
+struct SquareMatrix {
+    elems: Vec<usize>
+}
+
+impl SquareMatrix {
+    pub fn new(size: usize) -> Self {
+        assert!(size > 0 && size % 2 != 0, "Matrix size must be odd and bigger than 0!");
+
+        let mut elems = vec![0; size * size];
+
+        let mut dir: Directions = Directions::RIGHT;
+        let mut step: usize = 1;
+        let mut x: usize = size / 2;
+        let mut y: usize = size / 2;
+        elems[(y * size) + x] = 1;
+
+        let mut i = 2;
+        'outer: loop {
+            for _ in 0..2 { // Step is incremented every two directions
+                for _ in 0..step { // Number of steps before turning direction
+                    if i > (size * size) {
+                        break 'outer;
+                    }
+
+                    match dir {
+                        Directions::RIGHT => x = x + 1,
+                        Directions::UP => y = y - 1,
+                        Directions::LEFT => x = x - 1,
+                        Directions::DOWN => y = y + 1
+                    }
+
+                    elems[(y * size) + x] = i;
+                    i = i + 1;
+                }
+                dir = dir.rotate_counter_clockwise();
+            }
+            step = step + 1;
+        }
+
+        Self {
+            elems
+        }
+    }
+
+    pub fn len(&self) -> usize {
+        return self.elems.len();
+    }
+}
+
+impl Index<usize> for SquareMatrix {
+    type Output = usize;
+
+    fn index(&self, idx: usize) -> &usize {
+        return &self.elems[idx];
+    }
+}
+
+impl IndexMut<usize> for SquareMatrix {
+    fn index_mut(&mut self, idx: usize) -> &mut usize {
+        return &mut self.elems[idx];
+    }
+}
 
 enum Directions {
     RIGHT = 0,
@@ -49,65 +113,24 @@ fn is_prime(n: usize) -> bool {
     return true;
 }
 
-fn create_matrix(size: usize) -> Vec<usize> {
-    assert!(size > 0 && size % 2 != 0, "Matrix size must be odd and bigger than 0!");
-
-    let mut matrix = vec![0; size * size];
-    let mut dir: Directions = Directions::RIGHT;
-    let mut step: usize = 1;
-    let mut x: usize = size / 2;
-    let mut y: usize = size / 2;
-
-    matrix[(y * size) + x] = 1;
-
-    let mut i = 2;
-    'outer: loop {
-        for _ in 0..2 { // Step is incremented every two directions
-            for _ in 0..step { // Number of steps before turning direction
-                if i > (size * size) {
-                    break 'outer;
-                }
-
-                match dir {
-                    Directions::RIGHT => x = x + 1,
-                    Directions::UP => y = y - 1,
-                    Directions::LEFT => x = x - 1,
-                    Directions::DOWN => y = y + 1
-                }
-
-                matrix[(y * size) + x] = i;
-                i = i + 1;                
-            }
-            dir = dir.rotate_counter_clockwise();
-        }
-        step = step + 1;        
-    }
-
-    return matrix;
-}
-
-fn print_matrix(m: &Vec<usize>, as_numbers: bool) {
+fn print_matrix(m: &SquareMatrix, as_numbers: bool) {
     let size: u32 = (m.len() as f32).sqrt() as u32;
 
-    let mut pos: u32 = 1;
-    for item in m {
+    for pos in 0..m.len() as u32 {
         print!("{}{}",
-               if as_numbers {*item} else {if is_prime(*item) { 1 } else { 0 }},
-               if pos % size == 0 {"\n"} else {""});
-        pos = pos + 1;
+               if as_numbers {m[pos.try_into().unwrap()]} else {if is_prime(m[pos.try_into().unwrap()]) { 1 } else { 0 }},
+               if (pos + 1) % size == 0 {"\n"} else {""});
     }
 }
 
-fn save_as_image(m: Vec<usize>, path: &str) {
+fn save_as_image(m: SquareMatrix, path: &str) {
     let size: u32 = (m.len() as f32).sqrt() as u32;
     let mut img: image::GrayImage = ImageBuffer::new(size, size);
 
-    let mut pos: u32 = 0;
-    for item in m {
+    for pos in 0..m.len() as u32 {
         img.put_pixel(pos % size,
                       pos / size,
-                      if is_prime(item) { Luma([0]) } else { Luma([255]) });
-        pos = pos + 1;
+                      if is_prime(m[pos.try_into().unwrap()]) { Luma([0]) } else { Luma([255]) });
     }
 
     img.save(path).unwrap();
@@ -118,7 +141,7 @@ fn main() {
     let verbose: bool = false;
     let output: &str = "./test.png";
     
-    let matrix = create_matrix(size);
+    let matrix = SquareMatrix::new(size);
     if verbose { print_matrix(&matrix, true); }
     save_as_image(matrix, output);
 }
