@@ -61,11 +61,11 @@ fn create_matrix(size: usize) -> Vec<usize> {
     matrix[(y * size) + x] = 1;
 
     let mut i = 2;
-    while i < (size * size) {
-        for _j in 0..2 { // Step is incremented every two directions
-            for _n in 0..step {                
+    'outer: loop {
+        for _ in 0..2 { // Step is incremented every two directions
+            for _ in 0..step { // Number of steps before turning direction
                 if i > (size * size) {
-                    break;
+                    break 'outer;
                 }
 
                 match dir {
