@@ -122,7 +122,7 @@ fn print_matrix(m: &SquareMatrix, as_numbers: bool) {
     }
 }
 
-fn save_as_image(m: SquareMatrix, path: &str) {
+fn save_as_image(m: &SquareMatrix, path: &str) {
     let size: u32 = (m.len() as f32).sqrt() as u32;
     let mut img: image::GrayImage = ImageBuffer::new(size, size);
 
@@ -142,5 +142,5 @@ fn main() {
     
     let matrix = SquareMatrix::new(size);
     if verbose { print_matrix(&matrix, true); }
-    save_as_image(matrix, output);
+    save_as_image(&matrix, output);
 }
