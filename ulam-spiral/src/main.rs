@@ -29,9 +29,8 @@ impl SquareMatrix {
 
         let mut dir: Directions = Directions::RIGHT;
         let mut step: usize = 1;
-        let mut x: usize = size / 2;
-        let mut y: usize = size / 2;
-        elems[(y * size) + x] = 1;
+        let mut xy_cursor: (usize, usize) = (size / 2, size / 2);
+        elems[(xy_cursor.1 * size) + xy_cursor.0] = 1;
 
         let mut i = 2;
         'outer: loop {
@@ -42,13 +41,13 @@ impl SquareMatrix {
                     }
 
                     match dir {
-                        Directions::RIGHT => x = x + 1,
-                        Directions::UP => y = y - 1,
-                        Directions::LEFT => x = x - 1,
-                        Directions::DOWN => y = y + 1
+                        Directions::RIGHT => xy_cursor.0 += 1,
+                        Directions::UP => xy_cursor.1 -= 1,
+                        Directions::LEFT => xy_cursor.0 -= 1,
+                        Directions::DOWN => xy_cursor.1 += 1,
                     }
 
-                    elems[(y * size) + x] = i;
+                    elems[(xy_cursor.1 * size) + xy_cursor.0] = i;
                     i = i + 1;
                 }
                 dir = dir.rotate_counter_clockwise();
