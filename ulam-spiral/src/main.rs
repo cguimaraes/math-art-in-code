@@ -31,6 +31,15 @@ impl SquareMatrix {
     }
 }
 
+impl IntoIterator for SquareMatrix {
+    type Item = u32;
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.elems.into_iter()
+    }
+}
+
 impl Index<(u32, u32)> for SquareMatrix {
     type Output = u32;
 
@@ -135,25 +144,23 @@ fn is_prime(n: u32) -> bool {
 }
 
 fn print_matrix(us: &UlamSpiral, as_numbers: bool) {
-    let width: u32 = us.width();
+    let width = us.width() as usize;
 
-    let mut i : u32 = 1;
-    for &elem in us.elems() {
+    for (i, &elem) in us.elems().into_iter().enumerate() {
         print!("{}{}",
                if as_numbers {elem} else {if is_prime(elem) { 1 } else { 0 }},
-               if i % width == 0 {"\n"} else {""});
-        i += 1;
+               if (i + 1) % width == 0 {"\n"} else {""});
     }
 }
 
 fn save_as_image(us: &UlamSpiral, path: &str) {
-    let width: u32 = us.width();
+    let width = us.width();
     let mut img: image::GrayImage = ImageBuffer::new(width, width);
 
-    for pos in 0..us.matrix.len() {
-        let x : u32 = pos % width;
-        let y : u32 = pos / width;
-        img.put_pixel(x, y, if is_prime(us.matrix[(x, y)]) { Luma([0]) } else { Luma([255]) });
+    for (i, &elem) in us.elems().into_iter().enumerate() {
+        let x : u32 = (i as u32) % width;
+        let y : u32 = (i as u32) / width;
+        img.put_pixel(x, y, if is_prime(elem) { Luma([0]) } else { Luma([255]) });
     }
 
     img.save(path).unwrap();
