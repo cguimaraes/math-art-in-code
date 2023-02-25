@@ -14,19 +14,21 @@
 // limitations under the License.
 //
 
-mod ulam_spiral;
-mod square_matrix;
-mod directions;
-mod utils;
+pub enum Directions {
+    Right = 0,
+    Up = 1,
+    Left = 2,
+    Down = 3
+}
 
-use crate::ulam_spiral::UlamSpiral;
-
-fn main() {
-    let size = 3;
-    let verbose = true;
-    let output = "./test.png";
-    
-    let ulam_spiral = UlamSpiral::new(size);
-    if verbose { ulam_spiral.print(true); }
-    ulam_spiral.save_as_image(output);
+impl Directions
+{
+    pub fn rotate_counter_clockwise(&self) -> Directions {
+        match self {
+            Directions::Right => return Directions::Up,
+            Directions::Up => return Directions::Left,
+            Directions::Left => return Directions::Down,
+            Directions::Down => return Directions::Right
+        };
+    }
 }

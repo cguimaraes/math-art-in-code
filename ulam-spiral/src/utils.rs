@@ -14,19 +14,16 @@
 // limitations under the License.
 //
 
-mod ulam_spiral;
-mod square_matrix;
-mod directions;
-mod utils;
+pub fn is_prime(n: u32) -> bool {
+    if n == 0 || n == 1 {
+        return false;
+    }
 
-use crate::ulam_spiral::UlamSpiral;
+    for i in 2..(n / 2) + 1 {
+        if n % i == 0 {
+            return false;
+        }
+    }
 
-fn main() {
-    let size = 3;
-    let verbose = true;
-    let output = "./test.png";
-    
-    let ulam_spiral = UlamSpiral::new(size);
-    if verbose { ulam_spiral.print(true); }
-    ulam_spiral.save_as_image(output);
+    return true;
 }
