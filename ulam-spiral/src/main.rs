@@ -22,6 +22,12 @@ struct SquareMatrix {
 }
 
 impl SquareMatrix {
+    pub fn new(size: usize) -> Self {
+        Self {
+            elems: vec![0; size * size]
+        }
+    }
+
     pub fn len(&self) -> usize {
         return self.elems.len();
     }
@@ -64,9 +70,7 @@ impl UlamSpiral {
     pub fn new(size: usize) -> Self {
         assert!(size > 0 && size % 2 != 0, "Matrix size must be odd and bigger than 0!");
 
-        let mut matrix = SquareMatrix {
-            elems: vec![0; size * size],
-        };
+        let mut matrix = SquareMatrix::new(size);
 
         let mut dir = Directions::RIGHT;
         let mut step = 1;
