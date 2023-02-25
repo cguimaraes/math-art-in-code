@@ -95,6 +95,10 @@ impl UlamSpiral {
     pub fn elems(&self) -> &Vec<u32> {
         return &self.matrix.elems;
     }
+
+    pub fn width(&self) -> u32 {
+        return self.matrix.width();
+    }
 }
 
 enum Directions {
@@ -131,7 +135,7 @@ fn is_prime(n: u32) -> bool {
 }
 
 fn print_matrix(us: &UlamSpiral, as_numbers: bool) {
-    let width: u32 = us.matrix.width();
+    let width: u32 = us.width();
 
     let mut i : u32 = 1;
     for &elem in us.elems() {
@@ -143,7 +147,7 @@ fn print_matrix(us: &UlamSpiral, as_numbers: bool) {
 }
 
 fn save_as_image(us: &UlamSpiral, path: &str) {
-    let width: u32 = us.matrix.width();
+    let width: u32 = us.width();
     let mut img: image::GrayImage = ImageBuffer::new(width, width);
 
     for pos in 0..us.matrix.len() {
