@@ -15,6 +15,7 @@
 //
 
 use image::{ImageBuffer, Luma};
+use imageproc::drawing::draw_filled_circle_mut;
 
 use crate::square_matrix::SquareMatrix;
 use crate::directions::Directions;
@@ -90,6 +91,7 @@ impl UlamSpiral {
 
     pub fn save_as_image(&self, path: &str) {
         let width = 100;
+        let circle = 2;
         let mut img: image::GrayImage = ImageBuffer::new(width.try_into().unwrap(), width.try_into().unwrap());
     
         for (i, &elem) in self.elems().into_iter().enumerate() {
@@ -109,7 +111,11 @@ impl UlamSpiral {
 
             if x < width && y < width && x > 0 && y > 0 {
                 if is_prime(elem) {
-                    img.put_pixel(x as u32, y as u32, Luma([255]));
+                    if circle == 1 {
+                        img.put_pixel(x as u32, y as u32, Luma([255]));
+                    } else {
+                        draw_filled_circle_mut::<image::GrayImage>(&mut img, (x as i32, y as i32), circle, Luma([255]))
+                    }
                 }
             }
         }
