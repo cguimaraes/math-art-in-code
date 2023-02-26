@@ -18,14 +18,20 @@ use image::{ImageBuffer, Luma};
 
 use crate::square_matrix::SquareMatrix;
 use crate::directions::Directions;
-use crate::utils::is_prime;
+use crate::utils::{is_prime, rotate_point};
+
+pub enum UlamSpiralFormat {
+    Square,
+    Circular,
+}
 
 pub struct UlamSpiral {
-    matrix: SquareMatrix
+    matrix: SquareMatrix,
+    format: UlamSpiralFormat
 }
 
 impl UlamSpiral {
-    pub fn new(size: usize) -> Self {
+    pub fn new(size: usize, format: UlamSpiralFormat) -> Self {
         assert!(size > 0 && size % 2 != 0, "Matrix size must be odd and bigger than 0!");
 
         let mut matrix = SquareMatrix::new(size);
@@ -59,7 +65,8 @@ impl UlamSpiral {
         }
 
         Self {
-            matrix
+            matrix,
+            format
         }
     }
 
@@ -82,15 +89,29 @@ impl UlamSpiral {
     }
 
     pub fn save_as_image(&self, path: &str) {
-        let width = self.width();
+        let width = 100;
         let mut img: image::GrayImage = ImageBuffer::new(width.try_into().unwrap(), width.try_into().unwrap());
     
         for (i, &elem) in self.elems().into_iter().enumerate() {
-            let x = i  % width;
-            let y = i / width;
-            img.put_pixel(x.try_into().unwrap(),
-                          y.try_into().unwrap(),
-                          if is_prime(elem) { Luma([0]) } else { Luma([255]) });
+            let (x, y);
+            match self.format {
+                UlamSpiralFormat::Square => {
+                    x = (width / 2) - (self.width() / 2) + (i % self.width());
+                    y = (width / 2) - (self.width() / 2) + (i / self.width());
+                }
+
+                UlamSpiralFormat::Circular => {
+                    let (xr, yr) = rotate_point((elem as usize, 0), elem as f32);
+                    x = (((width / 2) as f32) + xr) as usize;
+                    y = (((width / 2) as f32) + yr) as usize;
+                }
+            }
+
+            if x < width && y < width && x > 0 && y > 0 {
+                if is_prime(elem) {
+                    img.put_pixel(x as u32, y as u32, Luma([255]));
+                }
+            }
         }
     
         img.save(path).unwrap();

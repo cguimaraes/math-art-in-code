@@ -19,14 +19,14 @@ mod square_matrix;
 mod directions;
 mod utils;
 
-use crate::ulam_spiral::UlamSpiral;
+use crate::ulam_spiral::{UlamSpiral, UlamSpiralFormat};
 
 fn main() {
     let size = 3;
     let verbose = true;
     let output = "./test.png";
     
-    let ulam_spiral = UlamSpiral::new(size);
+    let ulam_spiral = UlamSpiral::new(size, UlamSpiralFormat::Square);
     if verbose { ulam_spiral.print(true); }
     ulam_spiral.save_as_image(output);
 }
