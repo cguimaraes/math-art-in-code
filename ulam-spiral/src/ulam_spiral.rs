@@ -40,7 +40,7 @@ impl UlamSpiral {
         let mut dir = Directions::Right;
         let mut step = 1;
         let mut xy_cursor = (size / 2, size / 2);
-        matrix[(xy_cursor.0, xy_cursor.1)] = 1;
+        matrix[xy_cursor] = 1;
 
         let mut i = 2;
         'outer: loop {
@@ -57,7 +57,7 @@ impl UlamSpiral {
                         Directions::Down => xy_cursor.1 += 1,
                     }
 
-                    matrix[(xy_cursor.0, xy_cursor.1)] = i.try_into().unwrap();
+                    matrix[xy_cursor] = i.try_into().unwrap();
                     i = i + 1;
                 }
                 dir = dir.rotate_counter_clockwise();
