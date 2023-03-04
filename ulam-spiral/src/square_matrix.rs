@@ -17,7 +17,7 @@
 use std::ops::{Index, IndexMut};
 
 pub struct SquareMatrix {
-    elems: Vec<u32>
+    elems: Vec<usize>
 }
 
 impl SquareMatrix {
@@ -27,7 +27,7 @@ impl SquareMatrix {
         }
     }
 
-    pub fn elems(&self) -> &Vec<u32> {
+    pub fn elems(&self) -> &Vec<usize> {
         return &self.elems;
     }
 
@@ -41,7 +41,7 @@ impl SquareMatrix {
 }
 
 impl IntoIterator for SquareMatrix {
-    type Item = u32;
+    type Item = usize;
     type IntoIter = std::vec::IntoIter<Self::Item>;
 
     fn into_iter(self) -> Self::IntoIter {
@@ -50,16 +50,16 @@ impl IntoIterator for SquareMatrix {
 }
 
 impl Index<(usize, usize)> for SquareMatrix {
-    type Output = u32;
+    type Output = usize;
 
-    fn index(&self, idx: (usize, usize)) -> &u32 {
+    fn index(&self, idx: (usize, usize)) -> &usize {
         let width = self.width();
         return &self.elems[((idx.1 * width) + idx.0)];
     }
 }
 
 impl IndexMut<(usize, usize)> for SquareMatrix {
-    fn index_mut(&mut self, idx: (usize, usize)) -> &mut u32 {
+    fn index_mut(&mut self, idx: (usize, usize)) -> &mut usize {
         let width = self.width();
         return &mut self.elems[((idx.1 * width) + idx.0)];
     }

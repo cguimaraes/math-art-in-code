@@ -71,7 +71,7 @@ impl UlamSpiral {
         }
     }
 
-    pub fn elems(&self) -> &Vec<u32> {
+    pub fn elems(&self) -> &Vec<usize> {
         return &self.matrix.elems();
     }
 

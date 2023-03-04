@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-pub fn is_prime(n: u32) -> bool {
+pub fn is_prime(n: usize) -> bool {
     if n == 0 || n == 1 {
         return false;
     }
