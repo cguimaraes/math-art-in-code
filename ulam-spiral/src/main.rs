@@ -21,12 +21,41 @@ mod utils;
 
 use crate::ulam_spiral::{UlamSpiral, UlamSpiralFormat};
 
+use clap::Parser;
+
+/// Generate Ulam Spiral
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// Type of Ulam Spiral to draw (Square or Circle)
+    #[arg(short, long)]
+    format: UlamSpiralFormat,
+
+    /// Last value for the Ulam Spiral
+    #[arg(short, long, default_value_t = 1001)]
+    last: usize,
+
+    /// Output file
+    #[arg(short, long)]
+    output: String,
+
+    /// Image width
+    #[arg(short, long, default_value_t = 1001)]
+    width: usize,
+
+    /// Dot size for prime numbers
+    #[arg(short, long, default_value_t = 1)]
+    dot: usize,
+
+    /// Verbosity
+    #[arg(short, long, default_value_t = false)]
+    verbose: bool,
+}
+
 fn main() {
-    let size = 3;
-    let verbose = true;
-    let output = "./test.png";
-    
-    let ulam_spiral = UlamSpiral::new(size, UlamSpiralFormat::Square);
-    if verbose { ulam_spiral.print(true); }
-    ulam_spiral.save_as_image(output);
+    let args = Args::parse();
+
+    let ulam_spiral = UlamSpiral::new(args.last, args.format);
+    if args.verbose { ulam_spiral.print(true); }
+    ulam_spiral.save_as_image(&args.output, args.width, args.dot);
 }

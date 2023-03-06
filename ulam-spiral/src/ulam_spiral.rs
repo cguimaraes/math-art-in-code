@@ -21,9 +21,10 @@ use crate::square_matrix::SquareMatrix;
 use crate::directions::Directions;
 use crate::utils::{is_prime, rotate_point};
 
+#[derive(clap::ValueEnum, Clone, Debug)]
 pub enum UlamSpiralFormat {
     Square,
-    Circular,
+    Circle,
 }
 
 pub struct UlamSpiral {
@@ -32,21 +33,21 @@ pub struct UlamSpiral {
 }
 
 impl UlamSpiral {
-    pub fn new(size: usize, format: UlamSpiralFormat) -> Self {
-        assert!(size > 0 && size % 2 != 0, "Matrix size must be odd and bigger than 0!");
+    pub fn new(last: usize, format: UlamSpiralFormat) -> Self {
+        assert!(last > 0 && last % 2 != 0, "Matrix size must be odd and bigger than 0!");
 
-        let mut matrix = SquareMatrix::new(size);
+        let mut matrix = SquareMatrix::new(last);
 
         let mut dir = Directions::Right;
         let mut step = 1;
-        let mut xy_cursor = (size / 2, size / 2);
+        let mut xy_cursor = (last / 2, last / 2);
         matrix[xy_cursor] = 1;
 
         let mut i = 2;
         'outer: loop {
             for _ in 0..2 { // Step is incremented every two directions
                 for _ in 0..step { // Number of steps before turning direction
-                    if i > (size * size) {
+                    if i > (last * last) {
                         break 'outer;
                     }
 
@@ -57,7 +58,7 @@ impl UlamSpiral {
                         Directions::Down => xy_cursor.1 += 1,
                     }
 
-                    matrix[xy_cursor] = i.try_into().unwrap();
+                    matrix[xy_cursor] = i;
                     i = i + 1;
                 }
                 dir = dir.rotate_counter_clockwise();
@@ -89,32 +90,30 @@ impl UlamSpiral {
         }
     }
 
-    pub fn save_as_image(&self, path: &str) {
-        let width = 100;
-        let circle = 2;
-        let mut img: image::GrayImage = ImageBuffer::new(width.try_into().unwrap(), width.try_into().unwrap());
+    pub fn save_as_image(&self, path: &str, width: usize, dot: usize) {
+        let mut img: image::GrayImage = ImageBuffer::new(width as u32, width as u32);
     
         for (i, &elem) in self.elems().into_iter().enumerate() {
             let (x, y);
             match self.format {
                 UlamSpiralFormat::Square => {
-                    x = (width / 2) - (self.width() / 2) + (i % self.width());
-                    y = (width / 2) - (self.width() / 2) + (i / self.width());
+                    x = (width / 2) as isize - (self.width() / 2) as isize + (i % self.width()) as isize;
+                    y = (width / 2) as isize - (self.width() / 2) as isize + (i / self.width()) as isize;
                 }
 
-                UlamSpiralFormat::Circular => {
+                UlamSpiralFormat::Circle => {
                     let (xr, yr) = rotate_point((elem as usize, 0), elem as f32);
-                    x = (((width / 2) as f32) + xr) as usize;
-                    y = (((width / 2) as f32) + yr) as usize;
+                    x = (((width / 2) as f32) + xr) as isize;
+                    y = (((width / 2) as f32) + yr) as isize;
                 }
             }
 
-            if x < width && y < width && x > 0 && y > 0 {
+            if x < width as isize && y < width as isize && x > 0 && y > 0 {
                 if is_prime(elem) {
-                    if circle == 1 {
+                    if dot == 1 {
                         img.put_pixel(x as u32, y as u32, Luma([255]));
                     } else {
-                        draw_filled_circle_mut::<image::GrayImage>(&mut img, (x as i32, y as i32), circle, Luma([255]))
+                        draw_filled_circle_mut::<image::GrayImage>(&mut img, (x as i32, y as i32), dot as i32, Luma([255]))
                     }
                 }
             }
