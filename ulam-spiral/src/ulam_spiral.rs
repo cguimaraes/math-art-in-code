@@ -90,25 +90,25 @@ impl UlamSpiral {
         }
     }
 
-    pub fn save_as_image(&self, path: &str, width: usize, dot: usize) {
+    pub fn save_as_image(&self, path: &str, width: usize, scale: usize, dot: usize) {
         let mut img: image::GrayImage = ImageBuffer::new(width as u32, width as u32);
     
         for (i, &elem) in self.elems().into_iter().enumerate() {
             let (x, y);
             match self.format {
                 UlamSpiralFormat::Square => {
-                    x = (width / 2) as isize - (self.width() / 2) as isize + (i % self.width()) as isize;
-                    y = (width / 2) as isize - (self.width() / 2) as isize + (i / self.width()) as isize;
+                    x = (((width * scale / 2) as isize - (self.width() / 2) as isize)  + (i % self.width()) as isize) / scale as isize;
+                    y = (((width * scale / 2) as isize - (self.width() / 2) as isize) + (i / self.width()) as isize) / scale as isize;
                 }
 
                 UlamSpiralFormat::Circle => {
                     let (xr, yr) = rotate_point((elem as usize, 0), elem as f32);
-                    x = (((width / 2) as f32) + xr) as isize;
-                    y = (((width / 2) as f32) + yr) as isize;
+                    x = (((width * scale / 2) as f32 + xr) / scale as f32) as isize;
+                    y = (((width * scale / 2) as f32 + yr) / scale as f32) as isize;
                 }
             }
 
-            if x < width as isize && y < width as isize && x > 0 && y > 0 {
+            if x < width as isize && y < width as isize && x >= 0 && y >= 0 {
                 if is_prime(elem) {
                     if dot == 1 {
                         img.put_pixel(x as u32, y as u32, Luma([255]));
