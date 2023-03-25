@@ -17,26 +17,26 @@
 use std::ops::{Index, IndexMut};
 
 pub struct SquareMatrix {
-    elems: Vec<usize>
+    elems: Vec<usize>,
 }
 
 impl SquareMatrix {
     pub fn new(size: usize) -> Self {
         Self {
-            elems: vec![0; size * size]
+            elems: vec![0; size * size],
         }
     }
 
     pub fn elems(&self) -> &Vec<usize> {
-        return &self.elems;
+        &self.elems
     }
 
     pub fn len(&self) -> usize {
-        return self.elems.len();
+        self.elems.len()
     }
 
     pub fn width(&self) -> usize {
-        return (self.len() as f32).sqrt() as usize;
+        (self.len() as f32).sqrt() as usize
     }
 }
 
@@ -54,13 +54,13 @@ impl Index<(usize, usize)> for SquareMatrix {
 
     fn index(&self, idx: (usize, usize)) -> &usize {
         let width = self.width();
-        return &self.elems[((idx.1 * width) + idx.0)];
+        &self.elems[((idx.1 * width) + idx.0)]
     }
 }
 
 impl IndexMut<(usize, usize)> for SquareMatrix {
     fn index_mut(&mut self, idx: (usize, usize)) -> &mut usize {
         let width = self.width();
-        return &mut self.elems[((idx.1 * width) + idx.0)];
+        &mut self.elems[((idx.1 * width) + idx.0)]
     }
 }

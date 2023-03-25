@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
-mod ulam_spiral;
-mod square_matrix;
 mod directions;
+mod square_matrix;
+mod ulam_spiral;
 mod utils;
 
 use crate::ulam_spiral::{UlamSpiral, UlamSpiralFormat};
@@ -60,6 +60,8 @@ fn main() {
     let args = Args::parse();
 
     let ulam_spiral = UlamSpiral::new(args.last, args.format);
-    if args.verbose { ulam_spiral.print(true); }
+    if args.verbose {
+        ulam_spiral.print(true);
+    }
     ulam_spiral.save_as_image(&args.output, args.width, args.scale, args.dot);
 }

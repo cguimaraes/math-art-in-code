@@ -25,9 +25,12 @@ pub fn is_prime(n: usize) -> bool {
         }
     }
 
-    return true;
+    true
 }
 
 pub fn rotate_point(point: (usize, usize), angle: f32) -> (f32, f32) {
-    return (point.0 as f32 * angle.cos() - point.1 as f32 * angle.sin(), point.0 as f32 * angle.sin() + point.1 as f32 * angle.cos());
+    (
+        point.0 as f32 * angle.cos() - point.1 as f32 * angle.sin(),
+        point.0 as f32 * angle.sin() + point.1 as f32 * angle.cos(),
+    )
 }

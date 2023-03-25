@@ -18,17 +18,16 @@ pub enum Directions {
     Right = 0,
     Up = 1,
     Left = 2,
-    Down = 3
+    Down = 3,
 }
 
-impl Directions
-{
+impl Directions {
     pub fn rotate_counter_clockwise(&self) -> Directions {
         match self {
-            Directions::Right => return Directions::Up,
-            Directions::Up => return Directions::Left,
-            Directions::Left => return Directions::Down,
-            Directions::Down => return Directions::Right
-        };
+            Directions::Right => Directions::Up,
+            Directions::Up => Directions::Left,
+            Directions::Left => Directions::Down,
+            Directions::Down => Directions::Right,
+        }
     }
 }
