@@ -5,7 +5,7 @@ This is a collection of Rust programs that generate stunning visual art by imple
 The repository is meant to serve as a resource for learning Rust and exploring various mathematical ideas. Whether you are new to Rust or an experienced developer, you will find something interesting here. You can use the programs as examples, inspiration, or starting points for your own projects.
 
 The repository includes the following programs (and more):
- - Ulam Spiral: https://en.wikipedia.org/wiki/Ulam_spiral
+ - [Ulam Spiral](./ulam-spiral)
  
 Each program includes a README.md file that explains the math behind the program, the Rust code used to generate the image, and some example images. You can run the programs on your own computer and experiment with different parameters to generate new images.
 
